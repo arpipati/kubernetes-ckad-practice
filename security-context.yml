@@ -1,0 +1,27 @@
+## -- Security Context can be set on POD and Container level. Container level security context takes precedence over POD level security context.
+## -- Security Context can set the USER to run as and some other security related controls.
+## -- Additionally, we can add CAPABILITIES to the Security Context. This allows us to provision certain commands to be able to run as given user.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-pod
+spec:
+## -- Security Context at POD level. If securtiy context is not specified at container level, this will be applied to that containter.
+  securityContext:
+    runAsUser: 1001
+## -- add capabilities for user 1001 to run SYS_TIME command
+    capabilities:
+      add: ["SYS_TIME"]
+  containers:
+  - name: web
+    image: ubuntu
+    command: ["sleep", "5000"]
+## -- Security Context at Container level. This will take precedence over the POD level security context.
+    securityContext:
+      runAsUser: 1002
+
+## -- Security context not set at container level. This will take the POD level security context.
+  - name: sidecar
+    image: ubuntu
+    command: ["sleep", "5000"]

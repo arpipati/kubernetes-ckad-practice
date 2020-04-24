@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+# --- SPEC section will create replicaSet with 3 PODS. Label should match with associated label in TEMPLATE section.
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      name: alpine
+# --- TEMPLATE section will identify and match labels for the Replica Set. Possibly, we can have multiple metadata sections identifying multiple labels to set up unique replica sets  
+  template:
+    metadata:
+      labels:
+        name: alpine
+    spec:
+      containers:
+      - name: httpd-frontend
+        image: httpd:2.4-alpine
+

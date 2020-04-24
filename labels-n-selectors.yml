@@ -1,0 +1,5 @@
+## -- To list all Pods with a specific Label, For Ex: Label: env=dev:
+
+## -- kubectl get pods --selector env=dev
+
+## -- kubectl get all --selector env=prod,bu=finance,tier=frontend ---> identify objects based on very specific selectors.

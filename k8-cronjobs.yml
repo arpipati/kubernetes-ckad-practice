@@ -1,0 +1,23 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: throw-dice-cron-job
+spec:
+## -- This ensures the job will run at least 15 times.
+  backoffLimit: 15
+## -- This ensures we need 3 total completions. i.e: 3 total PODs need to complete successfully.   
+  completions: 3 
+## -- This ensures 3 PODs are running in parallel until the total number of completions is reached or the PODs complete successfully.  
+  parallelism: 3 
+## -- This attribute is specific to CronJobs. We can define schedule runs.
+  schedule: 30 21 * * *
+## -- When defining a CronJob, we need to include the jobTemplate section. This is a major difference compared to running a regular job.
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers: 
+          - name: throw-dice
+            image: kodekloud/throw-dice
+## -- When we define a JOB, the restartPolicy on the container MUST NOT be set to ALWAYS (which is the Default)      
+          restartPolicy: Never      

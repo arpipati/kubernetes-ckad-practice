@@ -1,0 +1,44 @@
+## -- You can set Labels on a Node.
+
+## -- Command to label a node: kubectl label node <node-name> <label=value>
+
+## -- Ex: kubectl label node node01 color=blue
+
+## -- To see on which node pods are deployed, kubectl get pods -o wide
+
+## -- Node Affinty: You can set a node affinity on a Pod/Container based on the Node Label. This will ensure the Pods are always running on the specific node.
+
+## kubernetes.io/hostname=master
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+# --- SPEC section will create replicaSet with 3 PODS. Label should match with associated label in TEMPLATE section.
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      name: alpine
+# --- TEMPLATE section will identify and match labels for the Replica Set. Possibly, we can have multiple metadata sections identifying multiple labels to set up unique replica sets  
+  template:
+    metadata:
+      labels:
+        name: alpine
+    spec:
+      containers:
+      - name: httpd-frontend
+        image: httpd:2.4-alpine
+## -- This will ensure the PODS in this deployment will always try to run on the Node which has a label = blue. 
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution: ## This will be based on the Type of NA you need.
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "color"
+                operator: In
+                values:
+                - blue
+
+## -- You may see a Label like this one: node-role.kubernetes.io/master= 
+## -- To match the Node Affinity to this Label, use the "Exists" Operator in the "affinity" section above ^^

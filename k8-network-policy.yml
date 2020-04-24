@@ -1,0 +1,43 @@
+## -- Network Policies enable traffic flow between SERVICES and PODs based on Policy_Types and Rules.
+
+## -- The following network policy will be applied to the POD named "internal" and traffic flow to and from the internal POD will be defined by the Ingress/Egress rules.
+apiVersion: networking.kubernates.io/v1
+kind: NetworkPolicy
+metadata:
+## -- Name of the Network Policy
+  name: internal-policy
+spec:
+## -- Pod Selector section here specifies the POD on which this network policy will be applied. In this case, this Network Policy will be applied to the "internal" POD.
+  podSelector:
+    matchLabels:
+      name: internal
+## -- 2 types of policies: Ingress (inbound traffic) and Egress (outbound traffic)
+    policyTypes:
+    - Ingress
+    - Egress
+## -- Ingress rule to enable traffic flow TO "internal" POD FROM "pod-name" POD on TCP port 8080
+    ingress:
+      - from:
+        - podSelector:
+            matchLabels:
+              name: pod-name
+        ports:
+        - protocol: TCP
+          port: 8080
+## -- Egress rule to enable traffic flow FROM "payroll" POD on TCP port 8080 and FROM "mysql" POD on TCP port 3306 TO the "internal" POD.
+      egress:
+        - to:
+          - podSelector:
+              matchLabels:
+                name: payroll
+          ports:
+          - protocol: TCP
+            port: 8080
+
+        - to:
+          - podSelector:
+              matchLabels:
+                name: mysql
+          ports:
+          - protocol: TCP
+            port: 3306

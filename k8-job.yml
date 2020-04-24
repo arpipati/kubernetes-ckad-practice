@@ -1,0 +1,29 @@
+
+## -- Jobs in K8s enable you to ensure a specific task is completed successfully. 
+## -- The job will run a new POD until the task is completed successfully or until the BackOffLimit is reached. 
+
+## -- BackOffLimit is a feature that ensures that the job does not terminate before successful completion. This feature can be set to any user defined value in the SPEC section.
+
+## -- Completion: This feature/variable defines the number of times the task needs to be completed successfully before the JOB terminates. This value is defined in the SPEC section.
+
+## -- Parallelism: This feature/variable defines the number of PODS that need to run in parallel. This value is defined in the SPEC section.
+
+## -- apiVersion is "batch/v1"
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: throw-dice-job
+spec:
+## -- This ensures the job will run at least 15 times.
+  backoffLimit: 15
+## -- This ensures we need 3 total completions. i.e: 3 total PODs need to complete successfully.   
+  completions: 3 
+## -- This ensures 3 PODs are running in parallel until the total number of completions is reached or the PODs complete successfully.  
+  parallelism: 3 
+  template:
+    spec:
+      containers: 
+      - name: throw-dice
+        image: kodekloud/throw-dice
+## -- When we define a JOB, the restartPolicy on the container MUST NOT be set to ALWAYS (which is the Default)      
+      restartPolicy: Never

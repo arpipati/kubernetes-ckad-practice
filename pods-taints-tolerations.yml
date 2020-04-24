@@ -1,0 +1,27 @@
+## -- NODES are TAINTED with a certain value and effect. This allows the given NODE to accept a pod based on the Pod's TOLERATIONS.
+
+## -- Command to TAINT Nodes: kubectl taint node <node-name> <key>=<value:effect>
+
+## -- Ex: kubectl taint node node01 spray=mortein:NoSchedule.
+
+## -- To remove a Taint from a Node, just add a '-' sign after the effect.
+
+## -- Ex: kubectl taint node node01 spray=mortein:NoSchedule-.
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bee
+spec:
+  containers:
+  - name: bee-container
+    image: nginx
+
+## -- Notice the following Toleration section. This applies the given toleration to the POD. This will allow the BEE Pod to be placed on a Node which has been TAINTED with Key=spray and vale=mortein:NoSchedule
+
+  tolerations:
+  - key: "Spray"
+    operator: "Equal"
+    value: "mortein"
+    effect: "NoSchedule"

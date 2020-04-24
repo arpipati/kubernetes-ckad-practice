@@ -1,0 +1,22 @@
+## -- Ingress is actually an INGRESS RESOURCE. The Ingress Resource basically specifies rules such as 'http', 'path', 'backend serviceName and servicePort'
+
+## -- NOTE: Ingress Controller is kind: Deployment; Ingress Resource is kind: Ingress.
+
+apiVersion: extensions/v1beta1
+kind: Ingress 
+metadata:
+## -- Annotations for rewrite-target. This annotation will automatically redirect the path to the actual Running INGRESS CONTROLLER and append the path specified in the Rules section. 
+## -- Pre-requisites: In order to use the rewrite-target annotation, this particular INGRESS should target exactly one Ingress Controller by specifying the ingress.class annotation.
+## -- https://kubernetes.github.io/ingress-nginx/examples/rewrite/ --> Documentation for Ingress.
+  annotations: 
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: rewrite
+  namespace: critical-space
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: pay-service
+          servicePort: 8282
+        path: /pay

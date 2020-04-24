@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-container-pod
+  namespace: elastic-stack
+spec:
+  containers:
+  - name: app
+    image: nginx
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernates.io/serviceaccount
+      name: default-token-xmjdw
+
+  - name: sidecar
+    image: nginx
+    volumeMounts:
+    - mountPaths: /var/log/event-simulator/
+      name: log-volume
+
+## -- Volume mounts can be set as above to mount spcific paths per container.
+
+
+## -- Get Logs from container in Pod: kubectl logs <pod-name> -c <container-name> --> "-c" flag is used to specify the container.
