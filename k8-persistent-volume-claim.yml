@@ -1,0 +1,19 @@
+## -- Persistent Volume Claim is a way to "bind" an available Persistent Volume to a set of specific requests.
+## -- In the PVC template, we can request storage size, access modes and other attributes.
+## -- PVCs are matched to PVs based on the request attributes.
+## -- Ex: PVC with storage size 100gb and access mode ReadWriteOnce will be matched to available PVs, whose attributes closely match the PVCs requests. 
+## -- If a PV to match the PVC is available, it gets assigned immediately.
+## -- If a PV to match the PVC is not available, the PVC goes into a PENDING state.  
+
+apiVersion: v1
+kind: PersistentVolumeCliam
+metadata:
+  name: claim-log-1
+spec:
+## -- accessModes is similar to PVs. If this accessMode matches with the one set on the PV, next priority is to closely match the storage request.
+  accessModes:
+  - ReadWriteMany
+## -- Requests are a set of RESOURCES in the PVC. Here, we have a Storage request of 50Mi.
+  resources:
+    requests:
+      storage: 50Mi

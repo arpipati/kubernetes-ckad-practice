@@ -1,0 +1,29 @@
+## -- Persistent Volumes (PVs) in Kubernetes allows us to preserve POD data. 
+
+## -- PVs can be a drive on the system (path similar to /data) or it can be a cloud based external block device. Ex: EBS volume in AWS.
+
+## -- Create Persistent Volume:
+
+apiVersion: v1
+kind: PersistentVolume
+metadata: 
+  name: pv-vol1
+spec:
+## -- accessModes is a property of PVs which specify the level of access. 3 types of access modes are available:
+## -- 1. ReadWriteOnce; 2. ReadWriteMany; 3. ReadOnlyMany  
+## -- The PVC is matched (bound) to a PV primararily based on the accessModes. 
+  accessModes:
+  - ReadWriteMany
+## -- Storage size for the PV can be specified in the 'capacity' section.
+  capacity:
+    storage: 100Mi
+## -- This section specifies the "Volume Type". 
+## -- hostPath volume type will mount the volume on the local path defined by the user.
+## -- The Volume Type can be any external volume as well, such as an EBS volume in AWS.
+  hostPath:
+    path: /var/log
+## -- This is how the EBS volume type is defined as a Persistent Volume in Kubernetes. 
+## -- volumeID is the ID of the EBS volume; "fstype" is the type of File System.
+  awsElasticBlockStorage:
+    volumeID: vol-abc12551
+    fstype: ext4

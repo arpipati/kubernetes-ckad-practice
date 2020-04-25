@@ -1,0 +1,21 @@
+## -- We can enable PODs to use the PVC and it's bound PV as volumes. 
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp-pod
+spec:
+  containers: 
+  - name: nginx-container
+    image: nginx
+## -- Define the volume to be mounted. Here, mountPath is '/log' and name of volume to mount is 'pvc-claim'
+    volumeMounts:
+    - mountPath: /log
+      name: pvc-claim
+## -- Define the Volume Details here. In this case, the volume name "pvc-claim" is "PersistentVolumeClaim" type. Name of PVC: claim-log-1  
+  volumes:
+  - name: pvc-claim
+    persistentVolumeClaim:
+      claimName: claim-log-1
+
+    
