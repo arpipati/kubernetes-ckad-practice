@@ -1,0 +1,11 @@
+## -- Secret Store
+
+## Command: kubectl create secret generic mysql-pass --from-literal=password=admin
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-pass
+
+data:
+  password: admin ## -- admin should be base64 encoded 
