@@ -1,0 +1,14 @@
+
+
+## -- Command: kubectl create service clusterip wordpress-mysql --tcp=3306:3306
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-mysql
+spec:
+  type: ClusterIP
+  ports:
+  - targetPort: 3306
+    port: 3306
+    protocol: TCP
