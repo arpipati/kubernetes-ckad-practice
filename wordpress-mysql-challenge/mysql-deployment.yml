@@ -1,0 +1,41 @@
+
+
+## -- Command: kubectl create deployment mysql --image=mysql:5.7 --dry-run -o yaml > mysql-deployment.yml
+
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+## -- Label MUST match service name (wordpress-mysql service). No info/hint given in Udemy CKAD course.      
+      name: wordpress-mysql 
+
+  template:
+    metadata:
+      labels:
+## -- Template label must match. ## -- Label MUST match service name (wordpress-mysql service). No info/hint given in Udemy CKAD course.        
+        name: wordpress-mysql 
+
+    spec:
+      containers:
+      - name: mysql-cont
+        image: mysql:5.7
+
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+
+        volumeMounts: 
+        - name: mysql-persistent-storage
+          mountPath:  /var/lib/mysql
+
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-persistent-storage
