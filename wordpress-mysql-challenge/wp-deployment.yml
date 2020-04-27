@@ -1,0 +1,39 @@
+
+
+## -- Command: kubectl create deployment wordpress --image=wordpress --dry-run -o yaml > wp-deployment.yml
+
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: wordpress
+spec:
+  replicas: 2
+  selector:
+    matchLabels: 
+      name: wp-dep
+
+  template:
+    metadata:
+      labels:
+        name: wp-dep
+
+    spec:
+      containers:
+      - name: wp-cont
+        image: wordpress
+
+        env:
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+
+        volumeMounts: 
+        - name: wordpress-persistent-storage
+          mountPath:  /var/www/html
+
+      volumes:
+      - name: wordpress-persistent-storage
+        persistentVolumeClaim:
+          claimName: wordpress-persistent-storage
