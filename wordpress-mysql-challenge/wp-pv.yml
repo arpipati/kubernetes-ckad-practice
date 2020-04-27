@@ -1,0 +1,20 @@
+## -- Create Persistent Volume for wordpress deployment
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: wordpress-persistent-storage
+spec:
+  accessModes:
+  - ReadWriteMany
+
+  capacity:
+    storage: 1Gi
+    
+## -- If path needs to be NFS, add this attribute.
+  storageClassName: nfs
+
+  nfs:
+## -- No info about the server name was given in the challenge questions on Udemy CKAD course  
+    server: nfs01 
+    path: "/html"
