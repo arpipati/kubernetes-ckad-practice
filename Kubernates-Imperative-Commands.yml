@@ -1,0 +1,19 @@
+
+## -- This command will terminate and create a new POD with saved changes. 
+- purpose: Modify existing POD properties
+  command: kubectl replace --force -f pod-name.yml
+
+## -- This command will assign a Label to a Node. This is useful to run a POD on a specific node.
+- purpose: Assign label to a node
+  command: kubectl label nodes <nodename> <label-key>=<label-value> 
+  Ex: kubectl label master nodename=master
+
+## -- This command will create a POD YAML 
+- purpose: Create POD YAML
+  command: kubeclt run --generator=run-pod/v1 <POD_NAME> --image=<image-name> --dry-run -o yaml > filename.yml
+
+## -- This command will create a Deployment YAML
+- purpose: Create Deployment YAML
+  command: kubectl create deploy <deploy-name> --image=<img-name> --dry-run -o yaml > filename.yml
+
+  
