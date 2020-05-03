@@ -1,0 +1,72 @@
+## Create a Persistent Volume called log-volume. It should make use of a storage class name manual. 
+## It should use RWX as the access mode and have a size of 1Gi. The volume should use the hostPath /opt/volume/nginx
+
+## Next, create a PVC called log-claim requesting a minimum of 200Mi of storage. This PVC should bind to log-volume.
+
+## Mount this in a pod called logger at the location /var/www/nginx. This pod should use the image nginx:alpine.
+
+## Steps
+## -- Create POD YAML with kubectl command: kubectl run --generator=run-pod/v1 logger --image=nginx:alpine
+## -- Create PersistentVolume with given details.
+## -- Create PersistentVolumeClaim with given details.
+## -- Ensure the PVC is 'bound' to the PV.
+## -- Modify POD YAML to mount the PVC.
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: log-volume
+spec:
+  accessModes:
+  - ReadWriteMany
+
+  capacity:
+    storage: 1Gi
+
+  storageClassName: manual
+
+  hostPath:
+    path: /opt/volume/nginx
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: log-claim
+spec:
+  accessModes:
+  - ReadWriteMany
+
+  resources:
+    requests:
+      storage: 200Mi
+
+  storageClassName: manual
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: logger
+  name: logger
+spec:
+  containers:
+  - image: nginx:alpine
+    name: logger
+    resources: {}
+
+    volumeMounts: 
+    - name: log-volume
+      mountPath: /var/www/nginx
+
+  volumes:
+  - name: log-volume
+    persistentVolumeClaim:
+      claimName: log-claim
+      
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
