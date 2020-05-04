@@ -1,0 +1,64 @@
+'''Create a redis deployment with the following parameters:
+Name of the deployment should be redis using the redis:alpine image. It should have exactly 1 replica.
+The container should request for .2 CPU. It should use the label app=redis.
+It should mount exactly 2 volumes:
+Make sure that the pod is scheduled on master node.
+
+
+a. An Empty directory volume called data at path /redis-master-data.
+b. A configmap volume called redis-config at path /redis-master.
+c.The container should expose the port 6379.
+'''
+
+## -- Generate a deployment YAML quickly using imperative commands:
+
+## -- kubectl create deploy redis --image=redis:alpine --dry-run -o yaml > redis.yml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+
+  template: 
+    metadata:
+      labels:
+        app: redis
+
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine
+
+        volumeMounts:
+        - name: data
+          mountPath: /redis-master-data
+
+        - name: redis-config
+          mountPath: /redis-master
+## -- nodeSelector matches Node based on Label. You can match an existing node label or create new one.
+## -- Command to show existing labels on the Master Node: kubectl get node master --show-labels  
+## -- Command to add new label to the Master node: kubectl label nodes master nodename=master
+      nodeSelector:
+        nodename: master
+## -- kubectl describe node master --> this will show all details related to the node. It will show Taints on the Node.
+## -- Add the following Toleration on the POD level, so that this POD can be assigned to the Tainted node.
+## -- The operator is "exists" because this taint already exists on the node. Effect is "NoSchedule" as observed from the Node details.
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: "Exists"
+        effect: "NoSchedule"
+## -- The Volume type is emptyDir: {}
+## -- Empty Dir volume is created when a POD is assigned to a Node. It exists as long as the POD is running on that Node.
+## -- When a Pod is removed from a node for any reason, the data in the emptyDir is deleted forever.
+      volumes:
+      - name: data
+        emptyDir: {}
+## -- This is how you can mount a ConfigMap as a Volume 
+      - name: redis-config
+        configMap:
+        name: redis-config
